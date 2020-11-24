@@ -1,26 +1,39 @@
-tablero = ["_", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+import util as ut
 
-msgs = {"titulo": "\n\n\n3 en Raya\n", "tbl1": "a"}
+if __name__ == "__main__":
+    # valores iniciales
+    jugador = 1
+    estado = 1
 
+    while estado == 1:
+        # limpiar consola
+        ut.clear()
 
-def linea_blanco(n):
-    print("\n" * n, end="")
+        # dibujar el tablero
+        ut.dibujar_tablero()
 
+        # actualizar turno
+        jugador = 1 if jugador % 2 else 2
+        sym = "X" if jugador == 1 else "O"
+        print(f"Es el turno del jugador '{jugador}' ('{sym}')\n")
 
-def dibujar_tablero():
-    sep_sp = 15  # cantidad de repeticiones
-    delim = "\t|\t" # delimitador entre celdas
-    sep_cell = "-" * sep_sp  # separador de celdas
-    sep_lim = "+" * sep_sp  # separador en limites de tablero
+        # interceptar elección de celda
+        eleccion = int(input("Ingresa el número de una celda (1-9): "))
 
-    linea_blanco(2)
-    print(f"\t|{sep_cell}|{sep_cell}|{sep_cell}|")
-    print(f"{delim}{tablero[1]}{delim}{tablero[2]}{delim}{tablero[3]}{delim}")
-    print(f"\t|{sep_cell}|{sep_cell}|{sep_cell}|")
-    print(f"{delim}{tablero[4]}{delim}{tablero[5]}{delim}{tablero[6]}{delim}")
-    print(f"\t|{sep_cell}|{sep_cell}|{sep_cell}|")
-    print(f"{delim}{tablero[7]}{delim}{tablero[8]}{delim}{tablero[9]}{delim}")
-    linea_blanco(2)
+        # marcar tablero a partir de la celda seleccionada
+        ut.marcar_tablero(eleccion, sym)
 
+        # verificar el estado del tablero (juego)
+        estado = ut.check_juego()
 
-dibujar_tablero()
+        # actualizar turno del jugador
+        jugador += 1
+
+    # dibujar el tablero
+    ut.dibujar_tablero()
+
+    if estado == 0:
+        jugador -= 1
+        print(f"El jugador '{jugador}' ('{sym}') ha ganado!")
+    else:
+        print("Nadie gana. Es un empate!")
