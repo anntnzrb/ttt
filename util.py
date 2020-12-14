@@ -1,10 +1,11 @@
 import os
 
-tablero = ["_", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+tablero = {1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: ""}
 
 
 def clear():
     """Limpia consola dependiendo del SO"""
+
     os.system("cls" if os.name == "nt" else "clear")
 
 
@@ -14,6 +15,7 @@ def linea_blanco(n=1):
     Argumentos:
     n -- cantidad de lineas a saltar (default 1)
     """
+
     print("\n" * n, end="")
 
 
@@ -43,33 +45,71 @@ def dibujar_tablero():
 
 
 def marcar_tablero(eleccion, sym):
-    """Imprime n saltos de linea
+    """marca el tablero
 
     Argumentos:
     eleccion -- celda elegida
     sym      -- simbolo ('X' | 'O')
+
+    Retorna:
+    (True, msg)  -- Acción satisfactoria + mensaje
+    (False, msg) -- Acción ilegal/error + mensaje
     """
 
-    if tablero[1] == "1" and eleccion == 1:
-        tablero[1] = sym
-    elif tablero[2] == "2" and eleccion == 2:
-        tablero[2] = sym
-    elif tablero[3] == "3" and eleccion == 3:
-        tablero[3] = sym
-    elif tablero[4] == "4" and eleccion == 4:
-        tablero[4] = sym
-    elif tablero[5] == "5" and eleccion == 5:
-        tablero[5] = sym
-    elif tablero[6] == "6" and eleccion == 6:
-        tablero[6] = sym
-    elif tablero[7] == "7" and eleccion == 7:
-        tablero[7] = sym
-    elif tablero[8] == "8" and eleccion == 8:
-        tablero[8] = sym
-    elif tablero[9] == "9" and eleccion == 9:
-        tablero[9] = sym
+    if 0 < eleccion < 10:
+        if tablero[eleccion]:
+            return False, "Esta celda ya está ocupada"
+        else:
+            tablero[eleccion] = sym
+            return True, ""
     else:
-        print("Movimiento inválido")
+        return False, "Celda incorrecta, ingrese una celda valida (1-9)"
+
+
+def check_celdas(*celdas):
+    """
+    Check para analizar las celdas del tablero
+
+    Argumentos:
+    *celdas -- Celda o Celdas a analizar
+
+    Retorna:
+    True  -- Todos los elementos en 'celdas' son iguales y no vacíos
+    False -- Caso contrario de True
+    """
+
+    return celdas[0] and all(celda == celdas[0] for celda in celdas)
+
+
+def check_fil(fila):
+    """
+    Check para analizar una fila del tablero
+
+    Argumentos:
+    fila -- fila a analizar
+
+    Retorna:
+    True  -- Todos los elementos de la fila son iguales
+    False -- Caso contrario de True
+    """
+
+    fila = fila * 3 - 2
+    return check_celdas(tablero[fila], tablero[fila + 1], tablero[fila + 2])
+
+
+def check_col(col):
+    """
+    Check para analizar una columna del tablero
+
+    Argumentos:
+    col -- columna a analizar
+
+    Retorna:
+    True  -- Todos los elementos de la columna son iguales
+    False -- Caso contrario de True
+    """
+
+    return check_celdas(tablero[col], tablero[col + 3], tablero[col + 6])
 
 
 def check_juego():
@@ -81,42 +121,22 @@ def check_juego():
     -1 -- empate
     """
 
-    # check horizontal
-    if tablero[1] == tablero[2] == tablero[3]:
-        return 0
-    elif tablero[4] == tablero[5] == tablero[6]:
-        return 0
-    elif tablero[7] == tablero[8] == tablero[9]:
-        pass
-        return 0
-
-    # check vertical
-    elif tablero[1] == tablero[4] == tablero[7]:
-        return 0
-    elif tablero[2] == tablero[5] == tablero[8]:
-        return 0
-    elif tablero[3] == tablero[6] == tablero[9]:
-        return 0
-
-    # check diagonal
-    elif tablero[1] == tablero[5] == tablero[9]:
-        return 0
-    elif tablero[3] == tablero[5] == tablero[7]:
+    if (
+        check_row(1)
+        or check_row(2)
+        or check_row(3)
+        or check_col(1)
+        or check_col(2)
+        or check_col(3)
+        or check_celdas(tablero[1], tablero[5], tablero[9])
+        or check_celdas(tablero[3], tablero[5], tablero[7])
+    ):
         return 0
 
     # empate
-    elif (
-        tablero[1] != "1"
-        and tablero[2] != "2"
-        and tablero[3] != "3"
-        and tablero[4] != "4"
-        and tablero[5] != "5"
-        and tablero[6] != "6"
-        and tablero[7] != "7"
-        and tablero[8] != "8"
-        and tablero[9] != "9"
-    ):
+    elif all(tablero.values()):
         return -1
 
+    # continuar
     else:
         return 1

@@ -1,7 +1,24 @@
+# libreria de utilidades local
 import util as ut
 
-if __name__ == "__main__":
-    # valores iniciales
+
+def crear_jugador():
+    """ Crea un jugador y asigna su pieza a partir de stdin """
+
+    nombre = input("Ingrese su nombre: ")
+    token = input("Ingrese su pieza: ")
+
+    return Jugador(nombre, token)
+
+
+def init():
+    """ Configuraciones predeterminadas para el arranque del juego """
+    pass
+
+
+def menu_opt1():
+    """ Opción #1 del menú numérico :: Juego simple """
+    # inicializar
     jugador = 1
     estado = 1
 
@@ -12,28 +29,32 @@ if __name__ == "__main__":
         # dibujar el tablero
         ut.dibujar_tablero()
 
-        # actualizar turno
-        jugador = 1 if jugador % 2 else 2
-        sym = "X" if jugador == 1 else "O"
-        print(f"Es el turno del jugador '{jugador}' ('{sym}')\n")
 
-        # interceptar elección de celda
-        eleccion = int(input("Ingresa el número de una celda (1-9): "))
+def main():
+    while True:
+        print(
+            f"""
+            \t\t\t3 en Raya
 
-        # marcar tablero a partir de la celda seleccionada
-        ut.marcar_tablero(eleccion, sym)
+            1. Juego simple
+            2. Campeonato
+            3. Registrar jugador
+            """
+        )
+        sel = int(input("Elija opción (1-3) :: "))
 
-        # verificar el estado del tablero (juego)
-        estado = ut.check_juego()
+        if sel == 1:
+            ut.clear()
+            menu_opt1()
+        elif sel == 2:
+            ut.clear()
+            print("hi 2")
+        elif sel == 3:
+            break
+        else:
+            ut.clear()
+            print("Error")
 
-        # actualizar turno del jugador
-        jugador += 1
 
-    # dibujar el tablero
-    ut.dibujar_tablero()
-
-    if estado == 0:
-        jugador -= 1
-        print(f"El jugador '{jugador}' ('{sym}') ha ganado!")
-    else:
-        print("Nadie gana. Es un empate!")
+if __name__ == "__main__":
+    main()
