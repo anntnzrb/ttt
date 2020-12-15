@@ -21,6 +21,7 @@ Adicional de cada partida debe guardarse las coordenadas que cada jugador
 escogió en el siguiente sistema de coordenadas.
 
 | (0,0) | (0,1) | (0,2) |
+|:-----:|:-----:|:-----:|
 | (1,0) | (1,1) | (1,2) |
 | (2,0) | (2,1) | (2,2) |
 
@@ -31,7 +32,7 @@ Adicional, Se puede crear campeonatos express, para lo cual se debe almacenar la
 asignación y clasificación de los jugadores, la fecha del campeonato, y el
 ganador el cual le suma 10 pts al score del jugador.
 
-**NOTA** :: Documento original (completo) en [./lib/docs/Proyecto_SDB.pdf]
+**NOTA** :: Documento original (completo) en [](./lib/docs/Proyecto_SDB.pdf)
 
 ## Sistema
 
