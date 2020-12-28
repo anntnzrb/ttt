@@ -25,7 +25,6 @@ def dibujar_tablero():
     sep_sp = 15  # cantidad de repeticiones
     delim = "\t|\t"  # delimitador entre celdas
     sep_cell = "-" * sep_sp  # separador de celdas
-    sep_lim = "+" * sep_sp  # separador en limites de tablero
 
     linea_blanco(2)
     print(
@@ -122,14 +121,14 @@ def check_juego():
     """
 
     if (
-        check_row(1)
-        or check_row(2)
-        or check_row(3)
-        or check_col(1)
-        or check_col(2)
-        or check_col(3)
-        or check_celdas(tablero[1], tablero[5], tablero[9])
-        or check_celdas(tablero[3], tablero[5], tablero[7])
+        check_fil(1)
+            or check_fil(2)
+            or check_fil(3)
+            or check_col(1)
+            or check_col(2)
+            or check_col(3)
+            or check_celdas(tablero[1], tablero[5], tablero[9])
+            or check_celdas(tablero[3], tablero[5], tablero[7])
     ):
         return 0
 
