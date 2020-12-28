@@ -1,74 +1,71 @@
-/**
-* 3 en Raya - G1 
-*/
+DROP DATABASE IF EXISTS proy_sbdg1;
+CREATE DATABASE IF NOT EXISTS proy_sbdg1;
+use proy_sbdg1;
 
-DROP DATABASE IF EXISTS `tictactoe`;
-CREATE DATABASE IF NOT EXISTS `tictactoe` DEFAULT CHARACTER SET utf8 ;
-
-use tictactoe;
-
-CREATE TABLE `Clasificacion` (
-    `ID_clasificacion` VARCHAR(6),
-    `ID_campeonato` VARCHAR(6),
+CREATE TABLE IF NOT EXISTS `Clasificacion` (
+    `ID_clasificacion` VARCHAR(6) NOT NULL,
+    `ID_campeonato` VARCHAR(6) NOT NULL,
     PRIMARY KEY (`ID_clasificacion`)
 );
 
-CREATE TABLE `Juega` (
-    `ID_partida` VARCHAR(6),
-    `usuario` VARCHAR(12),
-    KEY `PK, FK` (`ID_partida` , `usuario`)
+CREATE TABLE IF NOT EXISTS `Juega` (
+    `ID_partida` VARCHAR(6) NOT NULL,
+    `usuario` VARCHAR(12) NOT NULL,
+    PRIMARY KEY (`ID_partida`)
 );
 
-CREATE TABLE `Participa` (
-    `ID_campeonato` VARCHAR(6),
-    `usuario` VARCHAR(12),
-    KEY `PK, FK` (`ID_campeonato` , `usuario`)
-);
-
-CREATE TABLE `Torneo Express` (
-    `ID_campeonato` VARCHAR(6),
-    `fecha` DATETIME,
-    `jugador_ganador` VARCHAR(12),
+CREATE TABLE IF NOT EXISTS `Participa` (
+    `ID_campeonato` VARCHAR(6) NOT NULL,
+    `usuario` VARCHAR(12) NOT NULL,
     PRIMARY KEY (`ID_campeonato`)
 );
 
-CREATE TABLE `Jugador` (
-    `usuario` VARCHAR(12),
-    `nombre` VARCHAR(16),
-    `apellido` VARCHAR(16),
-    `sexo` VARCHAR(2),
-    `email` VARCHAR(16),
-    `clave` VARCHAR(16),
+CREATE TABLE IF NOT EXISTS `Torneo Express` (
+    `ID_campeonato` VARCHAR(6) NOT NULL,
+    `fecha` DATETIME,
+    `jugador_ganador` VARCHAR(12) NOT NULL,
+    PRIMARY KEY (`ID_campeonato`)
+);
+
+CREATE TABLE IF NOT EXISTS `Jugador` (
+    `usuario` VARCHAR(12) NOT NULL,
+    `nombre` VARCHAR(16) NOT NULL,
+    `apellido` VARCHAR(16) NOT NULL,
+    `sexo` VARCHAR(2) NOT NULL,
+    `email` VARCHAR(16) NOT NULL,
+    `clave` VARCHAR(16) NOT NULL,
     `fecha_nacimiento` DATE,
     `estado` BOOLEAN,
     PRIMARY KEY (`usuario`)
 );
 
-CREATE TABLE `Jugada` (
-    `ID_jugada` VARCHAR(6),
-    `ID_partida` VARCHAR(6),
+CREATE TABLE IF NOT EXISTS `Jugada` (
+    `ID_jugada` VARCHAR(6) NOT NULL,
+    `ID_partida` VARCHAR(6) NOT NULL,
     `coordenada_x` TINYINT,
     `coordenada_y` TINYINT,
     PRIMARY KEY (`ID_jugada`)
 );
 
-CREATE TABLE `Partida` (
-    `ID_partida` VARCHAR(6),
+CREATE TABLE IF NOT EXISTS `Partida` (
+    `ID_partida` VARCHAR(6) NOT NULL,
     `fecha_inicio` DATETIME,
     `fecha_fin` DATETIME,
     `estado` BOOLEAN,
-    `jugador_ganador` VARCHAR(12),
+    `jugador_ganador` VARCHAR(12) NOT NULL,
     PRIMARY KEY (`ID_partida`)
 );
 
-CREATE TABLE `Asignación` (
-    `ID_asignacion` VARCHAR(6),
-    `ID_campeonato` VARCHAR(6),
+CREATE TABLE IF NOT EXISTS `Asignación` (
+    `ID_asignacion` VARCHAR(6) NOT NULL,
+    `ID_campeonato` VARCHAR(6) NOT NULL,
     PRIMARY KEY (`ID_asignacion`)
 );
 
-CREATE TABLE `Genera` (
-    `ID_campeonato` VARCHAR(6),
-    `ID_partida` VARCHAR(6),
-    KEY `PK FK` (`ID_campeonato` , `ID_partida`)
+CREATE TABLE IF NOT EXISTS `Genera` (
+    `ID_campeonato` VARCHAR(6) NOT NULL,
+    `ID_partida` VARCHAR(6) NOT NULL,
+    PRIMARY KEY (`ID_campeonato`),
+    FOREIGN KEY (`ID_partida`)
+        REFERENCES Partida (`ID_partida`)
 );
