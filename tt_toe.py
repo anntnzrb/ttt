@@ -29,24 +29,11 @@ def sol_clave():
     return getpass.getpass(prompt='Clave (no se mostrará en pantalla): ')
 
 
-def menu_opt1():
-    """ Opción #1 del menú numérico :: Juego simple """
-    # inicializar
-    jugador = 1
-    estado = 1
-
-    while estado == 1:
-        # Actualizar turno
-        usr = sol_usr()
-        clave = sol_clave()
-
-        print(f"Hola '{usr}', tu clave es '{clave}'")
-
-        # dibujar el tablero
-        ut.dibujar_tablero()
-
-
 def main():
+    """ Programa principal. """
+
+    # Conexión SQL
+    conect_sql()
 
     # Menú numérico
     while True:
@@ -75,7 +62,7 @@ def main():
             ut.clear()
             print("hi 2")
         elif sel == 3:
-            print("hi 3")
+            menu_opt3()
         elif sel == 4:
             print("Has salido del juego.")
             break
@@ -83,13 +70,5 @@ def main():
             ut.clear()
             print("Error")
 
-
 if __name__ == "__main__":
-    db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        passwd="mysql",
-        db="proy_sbdg1")
-
-    curs = db.cursor()
     main()
