@@ -5,7 +5,68 @@ import util as ut
 import time
 import getpass
 import mysql.connector
+from mysql.connector import errorcode
 
+
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Opciones menú numérico
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+def menu_opt1():
+    """ Opción #1 del menú numérico :: Juego simple """
+    pass
+
+def menu_opt3():
+    """ Opción #3 del menú numérico :: Registro de nuevo jugador """
+
+    # debug
+    # credenciales
+    sql_config = {
+        'host': "localhost",
+        'user': "root",
+        'passwd': "mysql",
+        'db': "proy_sbdg1"
+    }
+
+    # Intento de conexión
+    conx = mysql.connector.connect(**sql_config)
+
+    # cursor
+    cursor = conx.cursor()
+
+    # solicitar usuario
+    sol_usr = input("Ingrese nombre de usuario: ")
+    cursor.excute("SHOW TABLES")
+
+    sol_clave = getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ")
+
+
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# SQL
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+def conect_sql():
+    """ Realiza la conexión a las base de datos SQL bajo credenciales
+    específicas."""
+
+    # credenciales
+    sql_config = {
+        'host': "localhost",
+        'user': "root",
+        'passwd': "mysql",
+        'db': "proy_sbdg1"
+    }
+
+    # Intento de conexión
+    conx = mysql.connector.connect(**sql_config)
+
+    # cursor
+    cursor = conx.cursor()
+
+
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Funciones generales
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 def crear_jugador():
     """ Crea un jugador y asigna su pieza a partir de stdin """
