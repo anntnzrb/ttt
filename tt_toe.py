@@ -9,65 +9,6 @@ from mysql.connector import errorcode
 
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# Opciones menú numérico
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-def menu_opt1():
-    """ Opción #1 del menú numérico :: Juego simple """
-
-    # Solicitud de datos
-    sol_usr = sol_usr()
-    sol_clave = sol_clave()
-
-def menu_opt2():
-    """ Opción #2 del menú numérico :: Campeonato """
-
-    sol_num_jug = int(input("Ingrese el numero de jugadores a registrar: "))
-
-    count = 0
-    while sol_num_jug > count:
-        # Solicitud de datos
-        sol_usr = sol_usr()
-        sol_clave = sol_clave()
-
-        # Actualizar
-        count +=1
-
-
-def menu_opt3():
-    """ Opción #3 del menú numérico :: Registro de nuevo jugador """
-
-    # Solicitud de datos
-    sol_usr = sol_usr()
-    sol_nombre = input("Ingrese nombre: ").upper()
-    sol_apellido = input("Ingrese apellido: ").upper()
-    sol_sexo = input("Ingrese sexo [género] (F/M): ").upper()
-    sol_email = input("Ingrese e-mail: ").upper()
-    sol_clave = sol_clave()
-    sol_fecha_nac = input("Ingrese fecha de nacimiento (YYYY-MM-DD): ")
-
-
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# SQL
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-def conect_sql():
-    """ Realiza la conexión a las base de datos SQL bajo credenciales
-    específicas."""
-
-    # credenciales
-    sql_config = {
-        'host': "localhost",
-        'user': "root",
-        'passwd': "mysql",
-        'db': "proy_sbdg1"
-    }
-
-    # Intento de conexión
-    conx = mysql.connector.connect(**sql_config)
-
-
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Funciones generales
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -88,6 +29,65 @@ def sol_usr():
 def sol_clave():
     """ Realiza la solicitud de la clave del usuario """
     return getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ").upper()
+
+
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Opciones menú numérico
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+def menu_opt1():
+    """ Opción #1 del menú numérico :: Juego simple """
+
+    # Solicitud de datos
+    usr = sol_usr()
+    clave = sol_clave()
+
+def menu_opt2():
+    """ Opción #2 del menú numérico :: Campeonato """
+
+    sol_num_jug = int(input("Ingrese el numero de jugadores a registrar: "))
+
+    count = 0
+    while sol_num_jug > count:
+        # Solicitud de datos
+        usr = sol_usr()
+        clave = sol_clave()
+
+        # Actualizar
+        count +=1
+
+
+def menu_opt3():
+    """ Opción #3 del menú numérico :: Registro de nuevo jugador """
+
+    # Solicitud de datos
+    usr = sol_usr()
+    nombre = input("Ingrese nombre: ").upper()
+    apellido = input("Ingrese apellido: ").upper()
+    sexo = input("Ingrese sexo [género] (F/M): ").upper()
+    email = input("Ingrese e-mail: ").upper()
+    clave = sol_clave()
+    fecha_nac = input("Ingrese fecha de nacimiento (YYYY-MM-DD): ")
+
+
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# SQL
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+def conect_sql():
+    """ Realiza la conexión a las base de datos SQL bajo credenciales
+    específicas."""
+
+    # credenciales
+    sql_config = {
+        'host': "localhost",
+        'user': "root",
+        'passwd': "mysql",
+        'db': "proy_sbdg1"
+    }
+
+    # Intento de conexión
+    conx = mysql.connector.connect(**sql_config)
 
 
 def main():
