@@ -14,7 +14,10 @@ from mysql.connector import errorcode
 
 def menu_opt1():
     """ Opción #1 del menú numérico :: Juego simple """
-    pass
+
+    sol_usr = input("Ingrese nombre de usuario: ").upper()
+    sol_clave = getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ")
+
 def menu_opt2():
     """ Opción #2 del menú numérico :: Campeonato """
 
@@ -48,10 +51,13 @@ def menu_opt3():
     cursor = conx.cursor()
 
     # solicitar usuario
-    sol_usr = input("Ingrese nombre de usuario: ")
-    cursor.excute("SHOW TABLES")
-
+    sol_usr = input("Ingrese nombre de usuario: ").upper()
+    sol_nombre = input("Ingrese nombre: ").upper()
+    sol_apellido = input("Ingrese apellido: ").upper()
+    sol_sexo = input("Ingrese sexo [género] (F/M): ").upper()
+    sol_email = input("Ingrese e-mail: ").upper()
     sol_clave = getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ")
+    sol_fecha_nac = input("Ingrese fecha de nacimiento (mm-dd-yyyy): ")
 
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -75,6 +81,9 @@ def conect_sql():
 
     # cursor
     cursor = conx.cursor()
+
+    # limpieza
+    conx.close()
 
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -107,7 +116,7 @@ def main():
     """ Programa principal. """
 
     # Conexión SQL
-    conect_sql()
+    #conect_sql()
 
     # Menú numérico
     while True:
@@ -141,10 +150,16 @@ def main():
             menu_opt2()
 
         elif sel == 3:
+            # Limpiar consola
+            ut.clear()
+
+            # Opción
             menu_opt3()
+
         elif sel == 4:
             print("Has salido del juego.")
             break
+
         else:
             ut.clear()
             print("Error")
