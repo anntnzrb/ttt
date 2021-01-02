@@ -1,6 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Preambulo 
 -- -----------------------------------------------------------------------------
+
 DROP DATABASE IF EXISTS proy_sbdg1; # testing (inseguro)
 
 CREATE DATABASE IF NOT EXISTS proy_sbdg1;
@@ -11,12 +12,12 @@ use proy_sbdg1;
 -- -----------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `Jugador` (
-    `usuario` VARCHAR(12) NOT NULL PRIMARY KEY,
-    `nombre` VARCHAR(16) NOT NULL,
-    `apellido` VARCHAR(16) NOT NULL,
-    `sexo` VARCHAR(2) NOT NULL,
-    `email` VARCHAR(16) NOT NULL,
-    `clave` VARCHAR(16) NOT NULL,
+    `usuario` VARCHAR(16) NOT NULL PRIMARY KEY,
+    `nombre` VARCHAR(32) NOT NULL,
+    `apellido` VARCHAR(32) NOT NULL,
+    `sexo` VARCHAR(1) NOT NULL,
+    `email` VARCHAR(64) NOT NULL,
+    `clave` VARCHAR(32) NOT NULL,
     `fecha_nacimiento` DATE,
     `estado` BOOLEAN NOT NULL
 );
