@@ -15,8 +15,9 @@ from mysql.connector import errorcode
 def menu_opt1():
     """ Opción #1 del menú numérico :: Juego simple """
 
-    sol_usr = input("Ingrese nombre de usuario: ").upper()
-    sol_clave = getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ")
+    # Solicitud de datos
+    sol_usr = sol_usr()
+    sol_clave = sol_clave()
 
 def menu_opt2():
     """ Opción #2 del menú numérico :: Campeonato """
@@ -25,39 +26,25 @@ def menu_opt2():
 
     count = 0
     while sol_num_jug > count:
-        sol_usr = input("Ingrese nombre de usuario: ").upper()
-        sol_clave = getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ")
+        # Solicitud de datos
+        sol_usr = sol_usr()
+        sol_clave = sol_clave()
 
-        # actualizar
+        # Actualizar
         count +=1
 
 
 def menu_opt3():
     """ Opción #3 del menú numérico :: Registro de nuevo jugador """
 
-    # debug
-    # credenciales
-    sql_config = {
-        'host': "localhost",
-        'user': "root",
-        'passwd': "mysql",
-        'db': "proy_sbdg1"
-    }
-
-    # Intento de conexión
-    conx = mysql.connector.connect(**sql_config)
-
-    # cursor
-    cursor = conx.cursor()
-
-    # solicitar usuario
-    sol_usr = input("Ingrese nombre de usuario: ").upper()
+    # Solicitud de datos
+    sol_usr = sol_usr()
     sol_nombre = input("Ingrese nombre: ").upper()
     sol_apellido = input("Ingrese apellido: ").upper()
     sol_sexo = input("Ingrese sexo [género] (F/M): ").upper()
     sol_email = input("Ingrese e-mail: ").upper()
-    sol_clave = getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ")
-    sol_fecha_nac = input("Ingrese fecha de nacimiento (mm-dd-yyyy): ")
+    sol_clave = sol_clave()
+    sol_fecha_nac = input("Ingrese fecha de nacimiento (YYYY-MM-DD): ")
 
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -79,12 +66,6 @@ def conect_sql():
     # Intento de conexión
     conx = mysql.connector.connect(**sql_config)
 
-    # cursor
-    cursor = conx.cursor()
-
-    # limpieza
-    conx.close()
-
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Funciones generales
@@ -99,24 +80,21 @@ def crear_jugador():
     return Jugador(nombre, token)
 
 
-def init():
-    """ Configuraciones predeterminadas para el arranque del juego """
-    pass
-
-
 def sol_usr():
-    return input("Ingrese su nombre de usuario: ")
+    """ Realiza la solicitud del nombre de usuario """
+    return input("Ingrese su nombre de usuario: ").upper()
 
 
 def sol_clave():
-    return getpass.getpass(prompt='Clave (no se mostrará en pantalla): ')
+    """ Realiza la solicitud de la clave del usuario """
+    return getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ").upper()
 
 
 def main():
     """ Programa principal. """
 
     # Conexión SQL
-    #conect_sql()
+    conect_sql()
 
     # Menú numérico
     while True:
