@@ -15,6 +15,19 @@ from mysql.connector import errorcode
 def menu_opt1():
     """ Opción #1 del menú numérico :: Juego simple """
     pass
+def menu_opt2():
+    """ Opción #2 del menú numérico :: Campeonato """
+
+    sol_num_jug = int(input("Ingrese el numero de jugadores a registrar: "))
+
+    count = 0
+    while sol_num_jug > count:
+        sol_usr = input("Ingrese nombre de usuario: ").upper()
+        sol_clave = getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ")
+
+        # actualizar
+        count +=1
+
 
 def menu_opt3():
     """ Opción #3 del menú numérico :: Registro de nuevo jugador """
@@ -119,9 +132,14 @@ def main():
 
             # Opción
             menu_opt1()
+
         elif sel == 2:
+            # Limpiar consola
             ut.clear()
-            print("hi 2")
+
+            # Opción
+            menu_opt2()
+
         elif sel == 3:
             menu_opt3()
         elif sel == 4:
