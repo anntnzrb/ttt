@@ -42,6 +42,62 @@ def menu_opt1():
     usr = sol_usr()
     clave = sol_clave()
 
+    # TODO: check credenciales
+
+    # valores iniciales
+    jugador = 1
+    estado = 1
+
+    while estado == 1:
+        # limpiar consola
+        ut.clear()
+
+        # dibujar el tablero
+        ut.dibujar_tablero()
+
+        # actualizar turno
+        jugador = 1 if jugador % 2 else 2
+        sym = "X" if jugador == 1 else "O"
+        print(f"Es el turno del jugador '{jugador}' ('{sym}')\n")
+
+        # interceptar elección de celda
+        try:
+            eleccion = int(input("Ingresa el número de una celda (1-9): "))
+        except:
+            print("Eso no es un numero...")
+            print("Intenta de nuevo...")
+            time.sleep(2)
+            continue
+
+        # marcar tablero a partir de la celda seleccionada
+        error, err_msg = ut.marcar_tablero(eleccion, sym)
+
+        # mostrar errores
+        if error:
+            print(err_msg)
+            time.sleep(1)
+
+        # verificar el estado del tablero (juego)
+        estado = ut.check_juego()
+
+        # actualizar turno del jugador
+        if not error:
+            jugador += 1
+
+    # dibujar el tablero
+    ut.dibujar_tablero()
+
+    if estado == 0:
+        jugador -= 1
+        print(f"El jugador '{jugador}' ('{sym}') ha ganado!")
+
+        # restablecer tablero
+        ut.tablero = {1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: ""}
+    else:
+        print("Nadie gana. Es un empate!")
+        # restablecer tablero
+        ut.tablero = {1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: ""}
+
 def menu_opt2():
     """ Opción #2 del menú numérico :: Campeonato """
 

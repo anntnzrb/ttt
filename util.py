@@ -51,18 +51,18 @@ def marcar_tablero(eleccion, sym):
     sym      -- simbolo ('X' | 'O')
 
     Retorna:
-    (True, msg)  -- Acción satisfactoria + mensaje
-    (False, msg) -- Acción ilegal/error + mensaje
+    (True, msg) -- Acción ilegal/error + mensaje
+    (False, msg)  -- Acción satisfactoria + mensaje
     """
 
     if 0 < eleccion < 10:
         if tablero[eleccion]:
-            return False, "Esta celda ya está ocupada"
+            return True, "Esta celda ya está ocupada"
         else:
             tablero[eleccion] = sym
-            return True, ""
+            return False, None
     else:
-        return False, "Celda incorrecta, ingrese una celda valida (1-9)"
+        return True, "Celda incorrecta, ingrese una celda valida (1-9)"
 
 
 def check_celdas(*celdas):
@@ -70,12 +70,12 @@ def check_celdas(*celdas):
     Check para analizar las celdas del tablero
 
     Argumentos:
-    *celdas -- Celda o Celdas a analizar
+        *celdas -- Celda o Celdas a analizar
 
     Retorna:
-    True  -- Todos los elementos en 'celdas' son iguales y no vacíos
-    False -- Caso contrario de True
-    """
+        True  -- Todos los elementos en 'celdas' son iguales y no vacíos
+        False -- Caso contrario de True
+        """
 
     return celdas[0] and all(celda == celdas[0] for celda in celdas)
 
