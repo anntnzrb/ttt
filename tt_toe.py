@@ -35,7 +35,7 @@ def sol_usr():
     usuario = input("Ingrese su nombre de usuario: ").upper()
     while not usuario.strip():      #verifica que no sea vacio
         usuario = input("Ingrese su nombre de usuario: ").upper()
-    return
+    return usuario
 
 
 # def sol_clave():
@@ -48,10 +48,11 @@ def sol_clave():
         key = input("Ingrese clave: ")
     return key
 
+
 def sol_estado():
     est = 0
     while (est != "1") and (est != "2"):
-        est = input("Ingrese estado del jugador(1.Activo, 2.Inactivo: )")
+        est = input("Ingrese estado del jugador(1.Activo, 2.Inactivo): ")
     return int(est)
 
 
@@ -149,11 +150,11 @@ def menu_opt3():
     clave = sol_clave()
     fecha_nac = input("Ingrese fecha de nacimiento (YYYY-MM-DD): ")
     estado_jugador=sol_estado()
-    return usr, nombre, apellido, sexo, email, clave, fecha_nac
+    return usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador
 
 usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador = menu_opt3()
 
-sql = "INSERT INTO jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento,estado) VALUES('{}','{}','{}','{}','{}','{}','{}','{}')".format(usr,nombre,apellido,sexo,email,clave,fecha_nac,estado,estado_jugador)
+sql = "INSERT INTO jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento,estado) VALUES('{}','{}','{}','{}','{}','{}','{}','{}')".format(usr,nombre,apellido,sexo,email,clave,fecha_nac,estado_jugador)
 cursor.execute(sql)
 
 connection.commit()
