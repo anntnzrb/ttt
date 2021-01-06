@@ -4,9 +4,12 @@ import util as ut
 # librerias externa
 import pymysql
 import time
-import getpass
 import mysql.connector
+from _datetime import datetime
 from mysql.connector import errorcode
+
+now = datetime.now()
+
 
 connection = pymysql.connect(
     host="localhost",
@@ -14,7 +17,6 @@ connection = pymysql.connect(
     password="daky1997",
     db="proy_sbdg1"
 )
-cursor = connection.cursor()
 
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -38,22 +40,30 @@ def sol_usr():
     return usuario
 
 
-# def sol_clave():
-#     """ Realiza la solicitud de la clave del usuario """
-#     return getpass.getpass(prompt="Ingrese clave (no se mostrará en pantalla): ").upper()
-
 def sol_clave():
     key = input("Ingrese clave: ")
     while not key.strip():       #verifica que no sea vacio
         key = input("Ingrese clave: ")
     return key
 
-
 def sol_estado():
     est = 0
     while (est != "1") and (est != "2"):
         est = input("Ingrese estado del jugador(1.Activo, 2.Inactivo): ")
     return int(est)
+
+def comprobar_usr_clave(usuario, clave):
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM jugador")
+    lineas_jugador = cursor.fetchall()
+    for fila in lineas_jugador:  # filas
+        usuario_base=fila[0]         #obtiene el nombre de usuario de la base de datos para validar con el de entrada por consola
+        clave_base = fila[5]        #obtiene la clave de usuario de la base de datos para validar con la de entrada por consola
+        if (usuario == usuario_base) and (clave==clave_base):
+            return True
+        else:
+            return False
+    connection.close()
 
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -63,9 +73,18 @@ def sol_estado():
 def menu_opt1():
     """ Opción #1 del menú numérico :: Juego simple """
 
+
     # Solicitud de datos
     usr = sol_usr()
     clave = sol_clave()
+
+    año = str(now.year)
+    mes = str(now.month)
+    dia = str(now.day)
+    hora = str(now.hour)
+    minuto = str(now.minute)
+    segundo = str(now.second)
+    inicio = año+mes+dia+" "+hora+minuto+segundo
 
     # TODO: check credenciales
 
@@ -123,6 +142,18 @@ def menu_opt1():
         # restablecer tablero
         ut.tablero = {1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: ""}
 
+    año_fin = str(now.year)
+    mes_fin = str(now.month)
+    dia_fin = str(now.day)
+    hora_fin = str(now.hour)
+    minuto_fin = str(now.minute)
+    segundo_fin = str(now.second)
+    fin = año_fin+mes_fin+dia_fin+" "+hora_fin+minuto_fin+segundo_fin
+
+    id_partida = "part1"
+
+    return id_partida,inicio, fin, estado, jugador
+
 def menu_opt2():
     """ Opción #2 del menú numérico :: Campeonato """
 
@@ -136,7 +167,6 @@ def menu_opt2():
 
         # Actualizar
         count +=1
-
 
 def menu_opt3():
     """ Opción #3 del menú numérico :: Registro de nuevo jugador """
@@ -152,85 +182,82 @@ def menu_opt3():
     estado_jugador=sol_estado()
     return usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador
 
-usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador = menu_opt3()
 
-sql = "INSERT INTO jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento,estado) VALUES('{}','{}','{}','{}','{}','{}','{}','{}')".format(usr,nombre,apellido,sexo,email,clave,fecha_nac,estado_jugador)
-cursor.execute(sql)
+def main():
+     """ Programa principal. """
 
-connection.commit()
+     # Menú numérico
+     while True:
+         print(
+             """
+             \t\t\t3 en Raya
 
+             1. Juego simple
+             2. Campeonato
+             3. Registrar jugador
+             4. Salir
+             """
+         )
 
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# SQL
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+         # Seleccionar opción
+         sel = int(input("Elija opción (1-3) :: "))
 
-# def conect_sql():
-#     """ Realiza la conexión a las base de datos SQL bajo credenciales
-#     específicas."""
-#
-#     # credenciales
-#     sql_config = {
-#         'host': "localhost",
-#         'user': "root",
-#         'passwd': "mysql",
-#         'db': "proy_sbdg1"
-#     }
-#
-#     # Intento de conexión
-#     conx = mysql.connector.connect(**sql_config)
+         # Listado de opciones (menú numérico)
+         if sel == 1:
 
+             # Limpiar consola
+             ut.clear()
+             # Opción
+             user=sol_usr().upper()
+             passw = sol_clave()
+             if comprobar_usr_clave(user,passw):
+                 id_partida,inicio, fin, estado, jugador = menu_opt1()
+             else:
+                 while comprobar_usr_clave(user, passw)!=True:
+                    print("usuario o clave incorrecto ")
+                    if comprobar_usr_clave(user, passw)!=True:
+                        salir = input("desea salir?(si desea salir ingrese si, caso contrario ingrese cualquier cosa)").upper()
+                        if salir =="SI":
+                            break
+                        else:
+                            user = sol_usr().upper()
+                            passw = sol_clave()
 
-# def main():
-#     """ Programa principal. """
-#
-#     # Conexión SQL
-#     # conect_sql()
-#
-#     # Menú numérico
-#     while True:
-#         print(
-#             """
-#             \t\t\t3 en Raya
-#
-#             1. Juego simple
-#             2. Campeonato
-#             3. Registrar jugador
-#             4. Salir
-#             """
-#         )
-#
-#         # Seleccionar opción
-#         sel = int(input("Elija opción (1-3) :: "))
-#
-#         # Listado de opciones (menú numérico)
-#         if sel == 1:
-#             # Limpiar consola
-#             ut.clear()
-#
-#             # Opción
-#             menu_opt1()
-#
-#         elif sel == 2:
-#             # Limpiar consola
-#             ut.clear()
-#
-#             # Opción
-#             menu_opt2()
-#
-#         elif sel == 3:
-#             # Limpiar consola
-#             ut.clear()
-#
-#             # Opción
-#             menu_opt3()
-#
-#         elif sel == 4:
-#             print("Has salido del juego.")
-#             break
-#
-#         else:
-#             ut.clear()
-#             print("Error")
-#
-# # if __name__ == "__main__":
-# #     main()
+                    elif comprobar_usr_clave(user, passw):
+                        id_partida,inicio, fin, estado, jugador = menu_opt1()
+             cursor=connection.cursor()
+             sql = "INSERT INTO partida(ID_partida, fecha_inicio, fecha_fin, estado, jugador_ganador) VALUES('{}','{}','{}','{}','{}')".format(
+                 id_partida,inicio, fin, estado, jugador)
+             cursor.execute(sql)  # executa el insert into para agregar datos a la tabla partida
+
+             connection.commit()
+
+         elif sel == 2:
+             # Limpiar consola
+             ut.clear()
+
+             # Opción
+             menu_opt2()
+
+         elif sel == 3:
+             # Limpiar consola
+             ut.clear()
+
+             # Opción
+             usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador = menu_opt3()
+
+             sql = "INSERT INTO jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento,estado) VALUES('{}','{}','{}','{}','{}','{}','{}','{}')".format(
+                 usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador)
+             cursor.execute(sql)  # executa el insert into para agregar datos a la tabla jugador
+
+             connection.commit()
+
+         elif sel == 4:
+             print("Has salido del juego.")
+             break
+
+         else:
+
+             ut.clear()
+             print("Error")
+main()
