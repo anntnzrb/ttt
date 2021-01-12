@@ -2,7 +2,7 @@
 -- Preambulo 
 -- -----------------------------------------------------------------------------
 
-DROP DATABASE IF EXISTS proy_sbdg1; # testing (inseguro)
+-- DROP DATABASE IF EXISTS proy_sbdg1; # testing (inseguro)
 
 CREATE DATABASE IF NOT EXISTS proy_sbdg1;
 use proy_sbdg1;

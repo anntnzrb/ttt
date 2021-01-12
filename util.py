@@ -44,7 +44,7 @@ def dibujar_tablero():
 
 
 def marcar_tablero(eleccion, sym):
-    """marca el tablero
+    """Marca el tablero
 
     Argumentos:
     eleccion -- celda elegida
