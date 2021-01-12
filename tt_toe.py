@@ -10,17 +10,11 @@ from mysql.connector import Error
 import util as ut
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# Datos
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# Ajustar siguientes variables acorde a su sistema
-
-sql_host = "localhost"
-sql_usr = "root"
-sql_clave = "mysql"
-
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Variables globales
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+sql_clave = "mysql"
+sql_db = "proy_sbdg1"
 
 # obtener tiempo ahora mismo
 now = datetime.now()
@@ -49,11 +43,30 @@ def crear_conex_sv(sql_host, sql_usr, sql_clave):
             user=sql_usr,
             passwd=sql_clave
         )
-        print("==> Se ha conectado a la base de datos de forma exitosa.")
+        print("==> ! Se ha conectado al servidor de la base de datos exitosamente.")
     except Error as err:
         print(f"Se ha producido el siguiente error: '{err}'")
 
     return conex
+
+
+# Inicializar conexión con el servidor SQL
+conex = crear_conex_sv("localhost", "root", sql_clave)
+
+
+def crear_bd(conex, consulta):
+    cursor = conex.cursor()
+
+    try:
+        cursor.execute(consulta)
+        print("==> ! Se ha creado/conectado a la base de bases existosamente.")
+    except Error as err:
+        print(f"==> Se ha producido el siguiente error: '{err}'")
+
+
+# Crear base de datos si es que no existe
+crear_bd_query = "CREATE DATABASE IF NOT EXISTS proy_sbdg1"
+crear_bd(conex, crear_bd_query)
 
 
 def crear_conex_bd(sql_host, sql_usr, sql_clave, sql_bd):
@@ -76,36 +89,28 @@ def crear_conex_bd(sql_host, sql_usr, sql_clave, sql_bd):
             passwd=sql_clave,
             db=sql_bd
         )
-        print("==> Se ha conectado a la base de datos de forma exitosa.")
+        print("==> ! Se ha conectado a la base de datos exitosamente.")
     except Error as err:
         print(f"Se ha producido el siguiente error: '{err}'")
 
     return conex
 
 
-def crear_bd(conex, consulta):
+def exec_consulta(conex, consulta, mute=False):
     cursor = conex.cursor()
 
     try:
-        cursor.execute(consulta, multi=True)
-        print("==> Se ha creado la base de bases de forma existosa.")
-    except Error as err:
-        print(f"==> Se ha producido el siguiente error: '{err}'")
-
-
-def exec_consulta(conex, consulta):
-    cursor = conex.cursor()
-
-    try:
-        cursor.execute(consulta, multi=True)
+        cursor.execute(consulta)
         conex.commit()
-        print("==> Se ha procesado la consulta exitosamente.")
+        if not mute:
+            print("==> Se ha procesado la consulta exitosamente.")
     except Error as err:
         print(f"==> Se ha producido el siguiente error: '{err}'")
 
 
 def leer_consulta(conex, consulta):
     cursor = conex.cursor()
+    result = None
 
     try:
         cursor.execute(consulta)
@@ -115,117 +120,119 @@ def leer_consulta(conex, consulta):
         print(f"==> Se ha producido el siguiente error: '{err}'")
 
 
-# Iniciar conexión con SQL
-conex = crear_conex_sv(sql_host, sql_usr, sql_clave)
-
-# Crear base de datos si es que no existe
-crear_bd(conex, "CREATE DATABASE IF NOT EXISTS proy_sbdg1")
-
-# Conexión con base de datos
-conex = crear_conex_bd(sql_host, sql_usr, sql_clave, "proy_sbdg1")
-
 # Datos de base de datos (Schema)
-sql_db_schema = """
-USE proy_sbdg1;
-
-CREATE TABLE IF NOT EXISTS `Jugador` (
-    `usuario` VARCHAR(16) NOT NULL PRIMARY KEY,
-    `nombre` VARCHAR(32) NOT NULL,
-    `apellido` VARCHAR(32) NOT NULL,
-    `sexo` VARCHAR(1) NOT NULL,
-    `email` VARCHAR(64) NOT NULL,
-    `clave` VARCHAR(32) NOT NULL,
-    `fecha_nacimiento` DATE,
-    `estado` BOOLEAN NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS `Partida` (
-    `ID_partida` VARCHAR(6) NOT NULL PRIMARY KEY,
-    `fecha_inicio` DATETIME NOT NULL,
-    `fecha_fin` DATETIME NOT NULL,
-    `estado` BOOLEAN NOT NULL,
-    `jugador_ganador` VARCHAR(12) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS `Juega` (
-    `ID_partida` VARCHAR(6) NOT NULL,
-    `usuario` VARCHAR(12) NOT NULL,
-    CONSTRAINT `pk_juega` PRIMARY KEY (`ID_partida` , `usuario`),
-    CONSTRAINT `fk_ID_partida_1` FOREIGN KEY (`ID_partida`)
-        REFERENCES Partida (`ID_partida`),
-    CONSTRAINT `fk_usuario_1` FOREIGN KEY (`usuario`)
-        REFERENCES Jugador (`usuario`)
-);
-
-CREATE TABLE IF NOT EXISTS `Torneo_Express` (
-    `ID_campeonato` VARCHAR(6) NOT NULL PRIMARY KEY,
-    `fecha` DATETIME,
-    `jugador_ganador` VARCHAR(12) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS `Clasificacion` (
-    `ID_clasificacion` VARCHAR(6) NOT NULL PRIMARY KEY,
-    `ID_campeonato` VARCHAR(6) NOT NULL,
-    CONSTRAINT `fk_ID_campeonato_1` FOREIGN KEY (`ID_campeonato`)
-        REFERENCES Torneo_Express (`ID_campeonato`)
-);
-
-CREATE TABLE IF NOT EXISTS `Participa` (
-    `ID_campeonato` VARCHAR(6) NOT NULL,
-    `usuario` VARCHAR(12) NOT NULL,
-    CONSTRAINT `pk_participa` PRIMARY KEY (`ID_campeonato`, `usuario`),
-    CONSTRAINT `fk_ID_campeonato_2` FOREIGN KEY (`ID_campeonato`)
-        REFERENCES Torneo_Express (`ID_campeonato`),
-    CONSTRAINT `fk_usuario_2` FOREIGN KEY (`usuario`)
-        REFERENCES Jugador (`usuario`)
-);
-
-CREATE TABLE IF NOT EXISTS `Jugada` (
-    `ID_jugada` VARCHAR(6) NOT NULL PRIMARY KEY,
-    `ID_partida` VARCHAR(6) NOT NULL,
-    `coordenada_x` TINYINT,
-    `coordenada_y` TINYINT,
-    CONSTRAINT `fk_ID_partida_2` FOREIGN KEY (`ID_partida`)
-        REFERENCES Partida (`ID_partida`)
-);
-
-CREATE TABLE IF NOT EXISTS `Asignacion` (
-    `ID_asignacion` VARCHAR(6) NOT NULL PRIMARY KEY,
-    `ID_campeonato` VARCHAR(6) NOT NULL,
-    CONSTRAINT `fk_ID_campeonato_3` FOREIGN KEY (`ID_campeonato`)
-        REFERENCES Torneo_Express (`ID_campeonato`)
-);
-
-CREATE TABLE IF NOT EXISTS `Genera` (
-    `ID_campeonato` VARCHAR(6) NOT NULL,
-    `ID_partida` VARCHAR(6) NOT NULL,
-    CONSTRAINT `pk_genera` PRIMARY KEY (`ID_campeonato` , `ID_partida`),
-    CONSTRAINT `fk_ID_partida_3` FOREIGN KEY (`ID_partida`)
-        REFERENCES Partida (`ID_partida`),
-    CONSTRAINT `fk_ID_campeonato_4` FOREIGN KEY (`ID_campeonato`)
-        REFERENCES Torneo_Express (`ID_campeonato`)
+sql_tbl_jugador = """
+CREATE TABLE IF NOT EXISTS Jugador (
+    usuario VARCHAR(16) NOT NULL PRIMARY KEY,
+    nombre VARCHAR(32) NOT NULL,
+    apellido VARCHAR(32) NOT NULL,
+    sexo VARCHAR(1) NOT NULL,
+    email VARCHAR(64) NOT NULL,
+    clave VARCHAR(32) NOT NULL,
+    fecha_nacimiento DATE,
+    estado BOOLEAN NOT NULL
 );
 """
 
-# Crear base de datos (Schema)
-crear_bd(conex, sql_db_schema)
+sql_tbl_partida = """
+CREATE TABLE IF NOT EXISTS Partida (
+    ID_partida VARCHAR(6) NOT NULL PRIMARY KEY,
+    fecha_inicio DATETIME NOT NULL,
+    fecha_fin DATETIME NOT NULL,
+    estado BOOLEAN NOT NULL,
+    jugador_ganador VARCHAR(12) NOT NULL
+);
+"""
+
+sql_tbl_juega = """
+CREATE TABLE IF NOT EXISTS Juega (
+    ID_partida VARCHAR(6) NOT NULL,
+    usuario VARCHAR(12) NOT NULL,
+    CONSTRAINT pk_juega PRIMARY KEY (ID_partida , usuario),
+    CONSTRAINT fk_ID_partida_1 FOREIGN KEY (ID_partida)
+        REFERENCES Partida (ID_partida),
+    CONSTRAINT fk_usuario_1 FOREIGN KEY (usuario)
+        REFERENCES Jugador (usuario)
+);
+"""
+
+sql_tbl_torneo_express = """
+CREATE TABLE IF NOT EXISTS Torneo_Express (
+    ID_campeonato VARCHAR(6) NOT NULL PRIMARY KEY,
+    fecha DATETIME,
+    jugador_ganador VARCHAR(12) NOT NULL
+);
+"""
+
+sql_tbl_clasificacion = """
+CREATE TABLE IF NOT EXISTS Clasificacion (
+    ID_clasificacion VARCHAR(6) NOT NULL PRIMARY KEY,
+    ID_campeonato VARCHAR(6) NOT NULL
+);
+"""
+
+sql_tbl_participa = """
+CREATE TABLE IF NOT EXISTS Participa (
+    ID_campeonato VARCHAR(6) NOT NULL,
+    usuario VARCHAR(12) NOT NULL,
+    CONSTRAINT pk_participa PRIMARY KEY (ID_campeonato, usuario),
+    CONSTRAINT fk_usuario_2 FOREIGN KEY (usuario)
+        REFERENCES Jugador (usuario)
+);
+"""
+
+sql_tbl_jugada = """
+CREATE TABLE IF NOT EXISTS Jugada (
+    ID_jugada VARCHAR(6) NOT NULL PRIMARY KEY,
+    ID_partida VARCHAR(6) NOT NULL,
+    coordenada_x TINYINT,
+    coordenada_y TINYINT,
+    CONSTRAINT fk_ID_partida_2 FOREIGN KEY (ID_partida)
+        REFERENCES Partida (ID_partida)
+);
+"""
+
+sql_tbl_asignacion = """
+CREATE TABLE IF NOT EXISTS Asignacion (
+    ID_asignacion VARCHAR(6) NOT NULL PRIMARY KEY,
+    ID_campeonato VARCHAR(6) NOT NULL
+);
+"""
+
+sql_tbl_genera = """
+CREATE TABLE IF NOT EXISTS Genera (
+    ID_campeonato VARCHAR(6) NOT NULL,
+    ID_partida VARCHAR(6) NOT NULL,
+    CONSTRAINT pk_genera PRIMARY KEY (ID_campeonato , ID_partida),
+    CONSTRAINT fk_ID_partida_3 FOREIGN KEY (ID_partida)
+        REFERENCES Partida (ID_partida)
+);
+"""
+
+# Crear tablas predeterminadas
+conex = crear_conex_bd("localhost", "root", sql_clave, sql_db)
+exec_consulta(conex, sql_tbl_partida, mute=True)
+exec_consulta(conex, sql_tbl_jugador, mute=True)
+exec_consulta(conex, sql_tbl_juega, mute=True)
+exec_consulta(conex, sql_tbl_participa, mute=True)
+exec_consulta(conex, sql_tbl_genera, mute=True)
+exec_consulta(conex, sql_tbl_jugada, mute=True)
+exec_consulta(conex, sql_tbl_clasificacion, mute=True)
+exec_consulta(conex, sql_tbl_asignacion, mute=True)
+exec_consulta(conex, sql_tbl_torneo_express, mute=True)
 
 # Datos de base de datos (Data)
 sql_db_data = """
-INSERT INTO `Jugador`
-    VALUES ("QWERTY", "QWERT", "TY", "F", "QWERTY@SOY.DEV", "azerty", "1970-01-29", 0);
-INSERT INTO `Jugador`
-    VALUES ("MAGAR", "Maria", "GARCIA", "F", "MAGAR@GNU.ORG", "magar876", "1995-07-07", 0);
-INSERT INTO `Jugador`
-    VALUES ("JLAW", "JHON", "Lawrance", "M", "JLAW@ESPOL.EDU.EC", "jlaw123", "1997-05-13", 0);
-INSERT INTO `Jugador`
-    VALUES ("NASANZA", "NICOLAS", "ASANZA", "M", "NASANZA@ESPOL.EDU.EC", "nasanz", "2002-03-14", 0);
-INSERT INTO `Jugador`
-    VALUES ("JUANGONZ", "JUAN ANTONIO", "GONZALEZ", "M", "JUANGONZ@ESPOL.EDU.EC", "qwerty", "1999-11-08", 0);
+INSERT INTO Jugador VALUES
+    ("QWERTY", "QWERT", "TY", "F", "QWERTY@SOY.DEV", "azerty", "1970-01-29", 0),
+    ("MAGAR", "Maria", "GARCIA", "F", "MAGAR@GNU.ORG", "magar876", "1995-07-07", 1),
+    ("JLAW", "JHON", "Lawrance", "M", "JLAW@ESPOL.EDU.EC", "jlaw123", "1997-05-13", 0),
+    ("NASANZA", "NICOLAS", "ASANZA", "M", "NASANZA@ESPOL.EDU.EC", "nasanz", "2002-03-14", 1),
+    ("JUANGONZ", "JUAN ANTONIO", "GONZALEZ", "M", "JUANGONZ@ESPOL.EDU.EC", "qwerty", "1999-11-08", 1);
 """
 
 # Agregar defaults a la base de datos (Data)
-exec_consulta(conex, sql_db_data)
+exec_consulta(conex, sql_db_data, mute=True)
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Funciones generales
@@ -273,15 +280,13 @@ def comprobar_datos_usr(usuario, clave):
     False -- comprobación fallida
     """
 
-    lineas_jugador = leer_consulta(conex, "SELECT * FROM Jugador")
+    query = """
+    SELECT *
+    FROM Jugador
+    """
+    lineas_jugador = leer_consulta(conex, query)
 
-    for fil in lineas_jugador:
-        # obtiene el nombre de usuario de la base de datos para validar con el de entrada por consola
-        usr_bd = fil[0]
-        # obtiene la clave de usuario de la base de datos para validar con la de entrada por consola
-        clave_bd = fil[5]
-
-        return True if (usuario == usr_bd) and (clave == clave_bd) else False
+    return any(fil[0] == usuario and fil[5] == clave for fil in lineas_jugador)
 
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -292,10 +297,22 @@ def comprobar_datos_usr(usuario, clave):
 def menu_opt1():
     """ Opción #1 del menú numérico :: Juego simple """
 
-    # Solicitud de datos
-    usr = sol_usr()
-    clave = sol_clave()
+    # Solicitud de datos (Inicio de Sesión)
+    user = sol_usr()
+    passw = sol_clave()
 
+    while not comprobar_datos_usr(user, passw):
+        print("==> Credenciales incorrectas.")
+
+        if input("Desea salir? (S/N): ").upper() == "S":
+            sys.exit()
+        else:
+            user = sol_usr()
+            passw = sol_clave()
+
+    print("Acceso exitoso.")
+
+    # Inicio de tiempo
     anio = str(now.year)
     mes = str(now.month)
     dia = str(now.day)
@@ -368,6 +385,13 @@ def menu_opt1():
 
     id_partida = "part1"
 
+    # sql = "INSERT INTO partida(ID_partida, fecha_inicio, fecha_fin, estado, jugador_ganador) VALUES('{}','{}','{}','{}','{}')".format(
+    #    id_partida, inicio, fin, estado, jugador)
+    ## executa el insert into para agregar datos a la tabla partida
+    # exec_consulta(conex, sql)
+
+    # conex.commit()
+
     return id_partida, inicio, fin, estado, jugador
 
 
@@ -419,34 +443,11 @@ def main():
         )
 
         # Seleccionar opción
-        sel = int(input("Elija opción (1-3) :: "))
+        sel = int(input("Elija opción (1-4) :: "))
 
         # Listado de opciones (menú numérico)
         if sel == 1:
-            # Opción
-            user = sol_usr()
-            passw = sol_clave()
-            if comprobar_datos_usr(user, passw):
-                id_partida, inicio, fin, estado, jugador = menu_opt1()
-            else:
-                while not comprobar_datos_usr(user, passw):
-                    print("==> Credenciales incorrectas.")
-                    if not comprobar_datos_usr(user, passw):
-                        salir = input("Desea salir? (S/N): ").upper()
-                        if salir == "S":
-                            sys.exit()
-                        else:
-                            user = sol_usr()
-                            passw = sol_clave()
-
-                    elif comprobar_datos_usr(user, passw):
-                        id_partida, inicio, fin, estado, jugador = menu_opt1()
-            sql = "INSERT INTO partida(ID_partida, fecha_inicio, fecha_fin, estado, jugador_ganador) VALUES('{}','{}','{}','{}','{}')".format(
-                id_partida, inicio, fin, estado, jugador)
-            # executa el insert into para agregar datos a la tabla partida
-            exec_consulta(conex, sql)
-
-            conex.commit()
+            menu_opt1()
 
         elif sel == 2:
             # Limpiar consola
@@ -460,10 +461,10 @@ def main():
             ut.clear()
 
             # Opción
-            usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador = menu_opt3()
+            usr, nombre, apellido, sexo, email, sql_clave, fecha_nac, estado_jugador = menu_opt3()
 
             sql = "INSERT INTO jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento,estado) VALUES('{}','{}','{}','{}','{}','{}','{}','{}')".format(
-                usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador)
+                usr, nombre, apellido, sexo, email, sql_clave, fecha_nac, estado_jugador)
 
             # executa el insert into para agregar datos a la tabla jugador
             exec_consulta(conex, sql)
@@ -472,10 +473,9 @@ def main():
 
         elif sel == 4:
             print("Has salido del juego.")
-            break
+            sys.exit()
 
         else:
-
             ut.clear()
             print("Error")
 
