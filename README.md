@@ -32,7 +32,7 @@ Adicional, Se puede crear campeonatos express, para lo cual se debe almacenar la
 asignación y clasificación de los jugadores, la fecha del campeonato, y el
 ganador el cual le suma 10 pts al score del jugador.
 
-**NOTA** :: Documento original (completo) en [](./lib/docs/Proyecto_SDB.pdf)
+**NOTA** :: Documento original (completo) en [PDF](./lib/docs/Proyecto_SDB.pdf).
 
 ## Sistema
 
@@ -44,7 +44,7 @@ El proyecto está escrito en Python, la lista de requerimientos de
 
 Se pueden instalar dichos requerimientos mediante:
 
-(estando en la ruta principal del proyecto)
+(_estando en la ruta principal del proyecto_)
 
 ```console
 pip install -r ./lib/python/requirements.txt
