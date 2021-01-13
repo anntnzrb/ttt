@@ -1,5 +1,16 @@
 # Proyecto Sistemas de Bases de Datos - G1
 
+<!-- Markdown TOC :: Start -->
+**Tabla de Contenidos**
+
+- [Proyecto Sistemas de Bases de Datos - G1](#proyecto-sistemas-de-bases-de-datos---g1)
+    - [Instrucciones del proyecto](#instrucciones-del-proyecto)
+    - [Sistema](#sistema)
+        - [Instrucciones dependencias de Python](#instrucciones-dependencias-de-python)
+    - [Integrantes](#integrantes)
+
+<!-- Markdown TOC :: End -->
+
 ## Instrucciones del proyecto
 
 El proyecto consistirá en que usted debe implementar una aplicación de juego de
