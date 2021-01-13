@@ -2,6 +2,9 @@
 Proyecto Sistemas de Bases de Datos -- Clase Principal
 
 ESPOL - II PAO 2020
+
+Referencias:
+https://github.com/thecraigd/Python_SQL/blob/master/mysql.ipynb
 """
 
 # librerias externa
