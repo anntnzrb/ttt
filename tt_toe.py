@@ -1,3 +1,9 @@
+"""
+Proyecto Sistemas de Bases de Datos -- Clase Principal
+
+ESPOL - II PAO 2020
+"""
+
 # librerias externa
 import sys
 import time
@@ -27,15 +33,13 @@ now = datetime.now()
 
 
 def crear_conex_sv(sql_host="localhost", sql_usr="root", sql_clave="root"):
-    """Función encargada de realizar la conexión con el servidor SQL
+    """
+    Función encargada de realizar la conexión con el servidor SQL
 
-    Argumentos:
-    sql_host  -- host de la base de datos
-    sql_usr   -- usuario con el que se accede de la base de datos
-    sql_clave -- clave para acceder a la base de datos
-
-    Retorna:
-    Objeto 'conex'
+    @param sql_host: Host de la base de datos
+    @param sql_usr: Usuario con el que se accede de la base de datos
+    @param sql_clave: Clave para acceder a la base de datos
+    @return: Objeto 'conex'
     """
 
     conex = None
@@ -53,6 +57,14 @@ def crear_conex_sv(sql_host="localhost", sql_usr="root", sql_clave="root"):
 
 
 def crear_bd(conex, query):
+    """
+
+    Crea la base de datos si es que ésta no está presente,
+    no hace nada en caso contrario.
+
+    @param conex: Objeto de conección a SQL
+    @param query: Consulta a realizar
+    """
     cursor = conex.cursor()
 
     try:
@@ -63,15 +75,14 @@ def crear_bd(conex, query):
 
 
 def crear_conex_bd(sql_host="localhost", sql_usr="root", sql_clave="root", sql_bd=None):
-    """Función encargada de realizar la conexión con la base de datos de SQL
+    """
+    Función encargada de realizar la conexión con la base de datos de SQL
 
-    Argumentos:
-    sql_host  -- host de la base de datos
-    sql_usr   -- usuario con el que se accede de la base de datos
-    sql_clave -- clave para acceder a la base de datos
-
-    Retorna:
-    Objeto 'conex'
+    @param sql_host: Host de la base de datos
+    @param sql_usr: Usuario con el que se accede de la base de datos
+    @param sql_clave: Clave para acceder a la base de datos
+    @param sql_bd: Nomhbre de la base de datos a conectar
+    @return: Objeto 'conex'
     """
 
     conex = None
@@ -90,6 +101,14 @@ def crear_conex_bd(sql_host="localhost", sql_usr="root", sql_clave="root", sql_b
 
 
 def exec_query(conex, query, mute=False):
+    """
+    Función encargada de realizar un query y hacer commit a la base de datos.
+
+    @param conex: Objeto de conección a SQL
+    @param query: Consulta a realizar
+    @param mute: Parámetro adicional para suprimir mensaje en pantalla
+    """
+
     cursor = conex.cursor()
 
     try:
@@ -102,6 +121,15 @@ def exec_query(conex, query, mute=False):
 
 
 def exec_list_query(conex, query, val, mute=False):
+    """
+    Función encargada de realizar un query con valores pasados como parámetro
+    y hacer commit a la base de datos.
+
+    @param conex: Objeto de conección a SQL
+    @param query: Consulta a realizar
+    @param val: Lista de valores para ser aplicada junto al query
+    @param mute: Parámetro adicional para suprimir mensaje en pantalla
+    """
     cursor = conex.cursor()
 
     try:
@@ -114,8 +142,15 @@ def exec_list_query(conex, query, val, mute=False):
 
 
 def leer_consulta(conex, consulta):
+    """
+    Función encargada de recoger información de la base de datos para
+    posteriormente realizar alguna acción.
+
+    @param conex: Objeto de conección a SQL
+    @param consulta: Consulta a realizar
+    @return:
+    """
     cursor = conex.cursor()
-    result = None
 
     try:
         cursor.execute(consulta)
@@ -175,6 +210,8 @@ def sol_clave():
 
 
 def sol_estado():
+    """ Realiza la solicitud del estado del usuario """
+
     estado = None
     while estado != 0 and estado != 1:
         estado = int(input("Ingrese estado del jugador (0 :: Inactivo, 1 :: Activo): "))
@@ -183,13 +220,12 @@ def sol_estado():
 
 
 def comprobar_datos_usr(usuario, clave):
-    """Comprueba datos del usuario
+    """
+    Comprueba datos del usuario.
 
-    Argumentos:
-    usuario -- usuario solicitado a verificar
-    clave   -- clave solicitada a verificar
-
-    Retorna:
+    @param usuario: usuario solicitado a verificar
+    @param clave: clave solicitada a verificar
+    @return:
     True  -- comprobación exitosa
     False -- comprobación fallida
     """
@@ -386,4 +422,6 @@ def main():
             print("Error")
 
 
-main()
+# Programa
+if __name__ == "__main__":
+    main()
