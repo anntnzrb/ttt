@@ -62,9 +62,7 @@ def crear_bd(conex, query):
         print(f"==> Se ha producido el siguiente error: '{err}'")
 
 
-
-
-def crear_conex_bd(sql_host, sql_usr, sql_clave, sql_bd):
+def crear_conex_bd(sql_host="localhost", sql_usr="root", sql_clave="root", sql_bd=None):
     """Función encargada de realizar la conexión con la base de datos de SQL
 
     Argumentos:
