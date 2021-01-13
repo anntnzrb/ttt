@@ -54,11 +54,11 @@ def crear_conex_sv(sql_host, sql_usr, sql_clave):
 conex = crear_conex_sv("localhost", "root", sql_clave)
 
 
-def crear_bd(conex, consulta):
+def crear_bd(conex, query):
     cursor = conex.cursor()
 
     try:
-        cursor.execute(consulta)
+        cursor.execute(query)
         print("==> ! Se ha creado/conectado a la base de bases existosamente.")
     except Error as err:
         print(f"==> Se ha producido el siguiente error: '{err}'")
@@ -96,11 +96,23 @@ def crear_conex_bd(sql_host, sql_usr, sql_clave, sql_bd):
     return conex
 
 
-def exec_consulta(conex, consulta, mute=False):
+def exec_query(conex, query, mute=False):
     cursor = conex.cursor()
 
     try:
-        cursor.execute(consulta)
+        cursor.execute(query)
+        conex.commit()
+        if not mute:
+            print("==> Se ha procesado la consulta exitosamente.")
+    except Error as err:
+        print(f"==> Se ha producido el siguiente error: '{err}'")
+
+
+def exec_list_query(conex, query, val, mute=False):
+    cursor = conex.cursor()
+
+    try:
+        cursor.executemany(query, val)
         conex.commit()
         if not mute:
             print("==> Se ha procesado la consulta exitosamente.")
@@ -211,19 +223,19 @@ CREATE TABLE IF NOT EXISTS Genera (
 
 # Crear tablas predeterminadas
 conex = crear_conex_bd("localhost", "root", sql_clave, sql_db)
-exec_consulta(conex, sql_tbl_partida, mute=True)
-exec_consulta(conex, sql_tbl_jugador, mute=True)
-exec_consulta(conex, sql_tbl_juega, mute=True)
-exec_consulta(conex, sql_tbl_participa, mute=True)
-exec_consulta(conex, sql_tbl_genera, mute=True)
-exec_consulta(conex, sql_tbl_jugada, mute=True)
-exec_consulta(conex, sql_tbl_clasificacion, mute=True)
-exec_consulta(conex, sql_tbl_asignacion, mute=True)
-exec_consulta(conex, sql_tbl_torneo_express, mute=True)
+exec_query(conex, sql_tbl_partida, mute=True)
+exec_query(conex, sql_tbl_jugador, mute=True)
+exec_query(conex, sql_tbl_juega, mute=True)
+exec_query(conex, sql_tbl_participa, mute=True)
+exec_query(conex, sql_tbl_genera, mute=True)
+exec_query(conex, sql_tbl_jugada, mute=True)
+exec_query(conex, sql_tbl_clasificacion, mute=True)
+exec_query(conex, sql_tbl_asignacion, mute=True)
+exec_query(conex, sql_tbl_torneo_express, mute=True)
 
 # Datos de base de datos (Data)
 sql_db_data = """
-INSERT INTO Jugador VALUES
+INSERT IGNORE INTO Jugador VALUES
     ("QWERTY", "QWERT", "TY", "F", "QWERTY@SOY.DEV", "azerty", "1970-01-29", 0),
     ("MAGAR", "Maria", "GARCIA", "F", "MAGAR@GNU.ORG", "magar876", "1995-07-07", 1),
     ("JLAW", "JHON", "Lawrance", "M", "JLAW@ESPOL.EDU.EC", "jlaw123", "1997-05-13", 0),
@@ -232,7 +244,7 @@ INSERT INTO Jugador VALUES
 """
 
 # Agregar defaults a la base de datos (Data)
-exec_consulta(conex, sql_db_data, mute=True)
+exec_query(conex, sql_db_data, mute=True)
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Funciones generales
@@ -262,10 +274,11 @@ def sol_clave():
 
 
 def sol_estado():
-    est = 0
-    while (est != "1") and (est != "2"):
-        est = input("Ingrese estado del jugador(1.Activo, 2.Inactivo): ")
-    return int(est)
+    estado = None
+    while estado != 0 and estado != 1:
+        estado = int(input("Ingrese estado del jugador (0 :: Inactivo, 1 :: Activo): "))
+
+    return estado
 
 
 def comprobar_datos_usr(usuario, clave):
@@ -280,11 +293,7 @@ def comprobar_datos_usr(usuario, clave):
     False -- comprobación fallida
     """
 
-    query = """
-    SELECT *
-    FROM Jugador
-    """
-    lineas_jugador = leer_consulta(conex, query)
+    lineas_jugador = leer_consulta(conex, "SELECT * FROM Jugador")
 
     return any(fil[0] == usuario and fil[5] == clave for fil in lineas_jugador)
 
@@ -388,11 +397,9 @@ def menu_opt1():
     # sql = "INSERT INTO partida(ID_partida, fecha_inicio, fecha_fin, estado, jugador_ganador) VALUES('{}','{}','{}','{}','{}')".format(
     #    id_partida, inicio, fin, estado, jugador)
     ## executa el insert into para agregar datos a la tabla partida
-    # exec_consulta(conex, sql)
+    # exec_query(conex, sql)
 
     # conex.commit()
-
-    return id_partida, inicio, fin, estado, jugador
 
 
 def menu_opt2():
@@ -413,6 +420,9 @@ def menu_opt2():
 def menu_opt3():
     """ Opción #3 del menú numérico :: Registro de nuevo jugador """
 
+    # Limpiar consola
+    ut.clear()
+
     # Solicitud de datos
     usr = sol_usr()
     nombre = input("Ingrese nombre: ").upper()
@@ -423,7 +433,14 @@ def menu_opt3():
     fecha_nac = input("Ingrese fecha de nacimiento (YYYY-MM-DD): ")
     estado_jugador = sol_estado()
 
-    return usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador
+    query = """
+    INSERT INTO Jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento, estado)
+    VALUES(%s, %s, %s, %s, %s, %s, %s, %s);
+    """
+    val = [(usr, nombre, apellido, sexo, email, clave, fecha_nac, estado_jugador)]
+
+    # executa el insert into para agregar datos a la tabla jugador
+    exec_list_query(conex, query, val)
 
 
 def main():
@@ -457,19 +474,7 @@ def main():
             menu_opt2()
 
         elif sel == 3:
-            # Limpiar consola
-            ut.clear()
-
-            # Opción
-            usr, nombre, apellido, sexo, email, sql_clave, fecha_nac, estado_jugador = menu_opt3()
-
-            sql = "INSERT INTO jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento,estado) VALUES('{}','{}','{}','{}','{}','{}','{}','{}')".format(
-                usr, nombre, apellido, sexo, email, sql_clave, fecha_nac, estado_jugador)
-
-            # executa el insert into para agregar datos a la tabla jugador
-            exec_consulta(conex, sql)
-
-            conex.commit()
+            menu_opt3()
 
         elif sel == 4:
             print("Has salido del juego.")
