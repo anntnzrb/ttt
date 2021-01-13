@@ -8,10 +8,12 @@ from mysql.connector import Error
 
 # librerias de utilidades local
 import util as ut
+from data import *
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Variables globales
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Ajustar variables acorde al sistema
 
 sql_clave = "mysql"
 sql_db = "proy_sbdg1"
@@ -24,7 +26,7 @@ now = datetime.now()
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-def crear_conex_sv(sql_host, sql_usr, sql_clave):
+def crear_conex_sv(sql_host="localhost", sql_usr="root", sql_clave="root"):
     """Función encargada de realizar la conexión con el servidor SQL
 
     Argumentos:
@@ -50,10 +52,6 @@ def crear_conex_sv(sql_host, sql_usr, sql_clave):
     return conex
 
 
-# Inicializar conexión con el servidor SQL
-conex = crear_conex_sv("localhost", "root", sql_clave)
-
-
 def crear_bd(conex, query):
     cursor = conex.cursor()
 
@@ -64,9 +62,6 @@ def crear_bd(conex, query):
         print(f"==> Se ha producido el siguiente error: '{err}'")
 
 
-# Crear base de datos si es que no existe
-crear_bd_query = "CREATE DATABASE IF NOT EXISTS proy_sbdg1"
-crear_bd(conex, crear_bd_query)
 
 
 def crear_conex_bd(sql_host, sql_usr, sql_clave, sql_bd):
@@ -132,96 +127,14 @@ def leer_consulta(conex, consulta):
         print(f"==> Se ha producido el siguiente error: '{err}'")
 
 
-# Datos de base de datos (Schema)
-sql_tbl_jugador = """
-CREATE TABLE IF NOT EXISTS Jugador (
-    usuario VARCHAR(16) NOT NULL PRIMARY KEY,
-    nombre VARCHAR(32) NOT NULL,
-    apellido VARCHAR(32) NOT NULL,
-    sexo VARCHAR(1) NOT NULL,
-    email VARCHAR(64) NOT NULL,
-    clave VARCHAR(32) NOT NULL,
-    fecha_nacimiento DATE,
-    estado BOOLEAN NOT NULL
-);
-"""
+# Inicializar conexión con el servidor SQL
+conex = crear_conex_sv("localhost", "root", sql_clave)
 
-sql_tbl_partida = """
-CREATE TABLE IF NOT EXISTS Partida (
-    ID_partida VARCHAR(6) NOT NULL PRIMARY KEY,
-    fecha_inicio DATETIME NOT NULL,
-    fecha_fin DATETIME NOT NULL,
-    estado BOOLEAN NOT NULL,
-    jugador_ganador VARCHAR(12) NOT NULL
-);
-"""
+# Crear base de datos si es que no existe
+crear_bd_query = "CREATE DATABASE IF NOT EXISTS proy_sbdg1"
+crear_bd(conex, crear_bd_query)
 
-sql_tbl_juega = """
-CREATE TABLE IF NOT EXISTS Juega (
-    ID_partida VARCHAR(6) NOT NULL,
-    usuario VARCHAR(12) NOT NULL,
-    CONSTRAINT pk_juega PRIMARY KEY (ID_partida , usuario),
-    CONSTRAINT fk_ID_partida_1 FOREIGN KEY (ID_partida)
-        REFERENCES Partida (ID_partida),
-    CONSTRAINT fk_usuario_1 FOREIGN KEY (usuario)
-        REFERENCES Jugador (usuario)
-);
-"""
-
-sql_tbl_torneo_express = """
-CREATE TABLE IF NOT EXISTS Torneo_Express (
-    ID_campeonato VARCHAR(6) NOT NULL PRIMARY KEY,
-    fecha DATETIME,
-    jugador_ganador VARCHAR(12) NOT NULL
-);
-"""
-
-sql_tbl_clasificacion = """
-CREATE TABLE IF NOT EXISTS Clasificacion (
-    ID_clasificacion VARCHAR(6) NOT NULL PRIMARY KEY,
-    ID_campeonato VARCHAR(6) NOT NULL
-);
-"""
-
-sql_tbl_participa = """
-CREATE TABLE IF NOT EXISTS Participa (
-    ID_campeonato VARCHAR(6) NOT NULL,
-    usuario VARCHAR(12) NOT NULL,
-    CONSTRAINT pk_participa PRIMARY KEY (ID_campeonato, usuario),
-    CONSTRAINT fk_usuario_2 FOREIGN KEY (usuario)
-        REFERENCES Jugador (usuario)
-);
-"""
-
-sql_tbl_jugada = """
-CREATE TABLE IF NOT EXISTS Jugada (
-    ID_jugada VARCHAR(6) NOT NULL PRIMARY KEY,
-    ID_partida VARCHAR(6) NOT NULL,
-    coordenada_x TINYINT,
-    coordenada_y TINYINT,
-    CONSTRAINT fk_ID_partida_2 FOREIGN KEY (ID_partida)
-        REFERENCES Partida (ID_partida)
-);
-"""
-
-sql_tbl_asignacion = """
-CREATE TABLE IF NOT EXISTS Asignacion (
-    ID_asignacion VARCHAR(6) NOT NULL PRIMARY KEY,
-    ID_campeonato VARCHAR(6) NOT NULL
-);
-"""
-
-sql_tbl_genera = """
-CREATE TABLE IF NOT EXISTS Genera (
-    ID_campeonato VARCHAR(6) NOT NULL,
-    ID_partida VARCHAR(6) NOT NULL,
-    CONSTRAINT pk_genera PRIMARY KEY (ID_campeonato , ID_partida),
-    CONSTRAINT fk_ID_partida_3 FOREIGN KEY (ID_partida)
-        REFERENCES Partida (ID_partida)
-);
-"""
-
-# Crear tablas predeterminadas
+# Schema
 conex = crear_conex_bd("localhost", "root", sql_clave, sql_db)
 exec_query(conex, sql_tbl_partida, mute=True)
 exec_query(conex, sql_tbl_jugador, mute=True)
@@ -233,17 +146,7 @@ exec_query(conex, sql_tbl_clasificacion, mute=True)
 exec_query(conex, sql_tbl_asignacion, mute=True)
 exec_query(conex, sql_tbl_torneo_express, mute=True)
 
-# Datos de base de datos (Data)
-sql_db_data = """
-INSERT IGNORE INTO Jugador VALUES
-    ("QWERTY", "QWERT", "TY", "F", "QWERTY@SOY.DEV", "azerty", "1970-01-29", 0),
-    ("MAGAR", "Maria", "GARCIA", "F", "MAGAR@GNU.ORG", "magar876", "1995-07-07", 1),
-    ("JLAW", "JHON", "Lawrance", "M", "JLAW@ESPOL.EDU.EC", "jlaw123", "1997-05-13", 0),
-    ("NASANZA", "NICOLAS", "ASANZA", "M", "NASANZA@ESPOL.EDU.EC", "nasanz", "2002-03-14", 1),
-    ("JUANGONZ", "JUAN ANTONIO", "GONZALEZ", "M", "JUANGONZ@ESPOL.EDU.EC", "qwerty", "1999-11-08", 1);
-"""
-
-# Agregar defaults a la base de datos (Data)
+# Data
 exec_query(conex, sql_db_data, mute=True)
 
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
