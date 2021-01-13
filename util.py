@@ -1,19 +1,25 @@
+"""
+Proyecto Sistemas de Bases de Datos -- Clase de utilidades
+
+ESPOL - II PAO 2020
+"""
+
 import os
 
 tablero = {1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: ""}
 
 
 def clear():
-    """Limpia consola dependiendo del SO"""
+    """Limpia consola dependiendo del sistema."""
 
     os.system("cls" if os.name == "nt" else "clear")
 
 
 def linea_blanco(n=1):
-    """Imprime n saltos de linea
+    """
+    Imprime 'n' saltos de linea.
 
-    Argumentos:
-    n -- cantidad de lineas a saltar (default 1)
+    @param n: cantidad de lineas a saltar (default 1)
     """
 
     print("\n" * n, end="")
@@ -44,13 +50,12 @@ def dibujar_tablero():
 
 
 def marcar_tablero(eleccion, sym):
-    """Marca el tablero
+    """
+    Marca el tablero.
 
-    Argumentos:
-    eleccion -- celda elegida
-    sym      -- simbolo ('X' | 'O')
-
-    Retorna:
+    @param eleccion: celda elegida
+    @param sym: simbolo ('X' | 'O')
+    @return:
     (True, msg) -- Acción ilegal/error + mensaje
     (False, msg)  -- Acción satisfactoria + mensaje
     """
@@ -67,28 +72,24 @@ def marcar_tablero(eleccion, sym):
 
 def check_celdas(*celdas):
     """
-    Check para analizar las celdas del tablero
+    Check para analizar las celdas del tablero.
 
-    Argumentos:
-        *celdas -- Celda o Celdas a analizar
-
-    Retorna:
-        True  -- Todos los elementos en 'celdas' son iguales y no vacíos
-        False -- Caso contrario de True
-        """
+    @param celdas: Celda o Celdas a analizar
+    @return:
+    True -- Todos los elementos en 'celdas' son iguales y no vacíos
+    False -- Caso contrario de True
+    """
 
     return celdas[0] and all(celda == celdas[0] for celda in celdas)
 
 
 def check_fil(fila):
     """
-    Check para analizar una fila del tablero
+    Check para analizar una fila del tablero.
 
-    Argumentos:
-    fila -- fila a analizar
-
-    Retorna:
-    True  -- Todos los elementos de la fila son iguales
+    @param fila: fila a analizar
+    @return:
+    True -- Todos los elementos de la fila son iguales
     False -- Caso contrario de True
     """
 
@@ -98,13 +99,11 @@ def check_fil(fila):
 
 def check_col(col):
     """
-    Check para analizar una columna del tablero
+    Check para analizar una columna del tablero.
 
-    Argumentos:
-    col -- columna a analizar
-
-    Retorna:
-    True  -- Todos los elementos de la columna son iguales
+    @param col: columna a analizar
+    @return:
+    True -- Todos los elementos de la columna son iguales
     False -- Caso contrario de True
     """
 
@@ -112,24 +111,17 @@ def check_col(col):
 
 
 def check_juego():
-    """Revisa el estado del juego
+    """
+    Revisa el estado del juego.
 
-    Retorna:
+    @return:
     0  -- juego terminado
     1  -- continua juego
     -1 -- empate
     """
 
-    if (
-        check_fil(1)
-            or check_fil(2)
-            or check_fil(3)
-            or check_col(1)
-            or check_col(2)
-            or check_col(3)
-            or check_celdas(tablero[1], tablero[5], tablero[9])
-            or check_celdas(tablero[3], tablero[5], tablero[7])
-    ):
+    if check_fil(1) or check_fil(2) or check_fil(3) or check_col(1) or check_col(2) or check_col(3) or check_celdas(
+            tablero[1], tablero[5], tablero[9]) or check_celdas(tablero[3], tablero[5], tablero[7]):
         return 0
 
     # empate
