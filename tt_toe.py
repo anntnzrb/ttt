@@ -24,7 +24,7 @@ from data import *
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Ajustar variables acorde al sistema
 
-sql_clave = "mysql"
+sql_clave = ""
 sql_db = "proy_sbdg1"
 
 # obtener tiempo ahora mismo
@@ -35,7 +35,7 @@ now = datetime.now()
 """ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-def crear_conex_sv(sql_host="localhost", sql_usr="root", sql_clave="root"):
+def crear_conex_sv(sql_host="localhost", sql_usr="root", sql_clave=""):
     """
     Función encargada de realizar la conexión con el servidor SQL
 
@@ -211,17 +211,6 @@ def sol_clave():
 
     return key
 
-
-def sol_estado():
-    """ Realiza la solicitud del estado del usuario """
-
-    estado = None
-    while estado != 0 and estado != 1:
-        estado = int(input("Ingrese estado del jugador (0 :: Inactivo, 1 :: Activo): "))
-
-    return estado
-
-
 def comprobar_datos_usr(usuario, clave):
     """
     Comprueba datos del usuario.
@@ -237,30 +226,7 @@ def comprobar_datos_usr(usuario, clave):
 
     return any(fil[0] == usuario and fil[5] == clave for fil in lineas_jugador)
 
-
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# Opciones menú numérico
-""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-def menu_opt1():
-    """ Opción #1 del menú numérico :: Juego simple """
-
-    # Solicitud de datos (Inicio de Sesión)
-    user = sol_usr()
-    passw = sol_clave()
-
-    while not comprobar_datos_usr(user, passw):
-        print("==> Credenciales incorrectas.")
-
-        if input("Desea salir? (S/N): ").upper() == "S":
-            sys.exit()
-        else:
-            user = sol_usr()
-            passw = sol_clave()
-
-    print("Acceso exitoso.")
-
+def iniciar_partida():
     # Inicio de tiempo
     anio = str(now.year)
     mes = str(now.month)
@@ -310,7 +276,7 @@ def menu_opt1():
         if not error:
             jugador += 1
 
-    # dibujar el tablero
+        # dibujar el tablero
     ut.dibujar_tablero()
 
     if estado == 0:
@@ -332,15 +298,39 @@ def menu_opt1():
     segundo_fin = str(now.second)
     fin = anio_fin + mes_fin + dia_fin + " " + hora_fin + minuto_fin + segundo_fin
 
-    id_partida = "part1"
+    #query = 'INSERT INTO partida(fecha_inicio, fecha_fin, estado, jugador_ganador) VALUES('+inicio+','+fin+','+estado+',"JLOW")'
 
-    # sql = "INSERT INTO partida(ID_partida, fecha_inicio, fecha_fin, estado, jugador_ganador) VALUES('{}','{}','{}','{}','{}')".format(
-    #    id_partida, inicio, fin, estado, jugador)
     ## executa el insert into para agregar datos a la tabla partida
-    # exec_query(conex, sql)
+    #exec_query(conex, query)
 
-    # conex.commit()
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Opciones menú numérico
+""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+
+def menu_opt1():
+    """ Opción #1 del menú numérico :: Juego simple """
+
+    # Ingreso de jugadores
+    jugador1=input("Ingrese el usuario del jugador 1: ").upper()
+    jugador2= input ("Ingrese el usuario del jugador 2: ").upper()
+
+    try:
+        #verificacion de status
+        verif1=leer_consulta(conex, "select estado from jugador where usuario= \"" +jugador1+"\";")[0]
+        verif2=leer_consulta(conex, "select estado from jugador where usuario= \"" +jugador2+"\";")[0]
+
+        if verif1[0]==1 and verif2[0]==1:
+            iniciar_partida()
+
+        elif verif1[0]!=1:
+            print("El jugador 1 no se ha loogeado!!")
+
+        elif verif2[0]!=1:
+            print("El jugador 2 no se ha loogeado!!")
+
+    except IndexError:
+        print("usuario mal ingresado")
 
 def menu_opt2():
     """ Opción #2 del menú numérico :: Campeonato """
@@ -371,7 +361,7 @@ def menu_opt3():
     email = input("Ingrese e-mail: ").upper()
     clave = sol_clave()
     fecha_nac = input("Ingrese fecha de nacimiento (YYYY-MM-DD): ")
-    estado_jugador = sol_estado()
+    estado_jugador = 0
 
     query = """
     INSERT INTO Jugador(usuario, nombre, apellido, sexo, email, clave, fecha_nacimiento, estado)
@@ -382,6 +372,25 @@ def menu_opt3():
     # executa el insert into para agregar datos a la tabla jugador
     exec_list_query(conex, query, val)
 
+def menu_opt4():
+    """ Permite que un jugador inicie seción para poder jugar """
+    usuario=input("Ingrese su usuario: ").upper()
+    contraseña=input("Ingrese su contraseña: ")
+
+    query='select usuario, clave from jugador where usuario = \"'+ usuario +'\";'
+    try:
+        comparar=leer_consulta(conex, query)[0]
+
+        rusuario, rcontraseña= comparar
+
+        if usuario==rusuario and contraseña==rcontraseña:
+            query2='update jugador set estado=1 where usuario=\"' + rusuario +'\";'
+            exec_query(conex,query2,True)
+            print(' ACCESO CORRECTO ')
+        else:
+            print(' ACCESO INCORRECTO ')
+    except IndexError as err:
+        print(' Usuario no existe ')
 
 def main():
     """ Programa principal. """
@@ -395,12 +404,13 @@ def main():
             1. Juego simple
             2. Campeonato
             3. Registrar jugador
-            4. Salir
+            4. Iniciar sesión
+            5. Salir
             """
         )
 
         # Seleccionar opción
-        sel = int(input("Elija opción (1-4) :: "))
+        sel = int(input("Elija opción (1-5): "))
 
         # Listado de opciones (menú numérico)
         if sel == 1:
@@ -417,7 +427,13 @@ def main():
             menu_opt3()
 
         elif sel == 4:
+            menu_opt4()
+
+        elif sel == 5:
+
             print("Has salido del juego.")
+            query = 'update jugador set estado=0 where estado=1;'
+            exec_query(conex, query, True)
             sys.exit()
 
         else:

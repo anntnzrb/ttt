@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Jugador (
 
 sql_tbl_partida = """
 CREATE TABLE IF NOT EXISTS Partida (
-    ID_partida VARCHAR(6) NOT NULL PRIMARY KEY,
+    ID_partida int NOT NULL auto_increment PRIMARY KEY,
     fecha_inicio DATETIME NOT NULL,
     fecha_fin DATETIME NOT NULL,
     estado BOOLEAN NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS Partida (
 
 sql_tbl_juega = """
 CREATE TABLE IF NOT EXISTS Juega (
-    ID_partida VARCHAR(6) NOT NULL,
+    ID_partida int NOT NULL,
     usuario VARCHAR(12) NOT NULL,
     CONSTRAINT pk_juega PRIMARY KEY (ID_partida , usuario),
     CONSTRAINT fk_ID_partida_1 FOREIGN KEY (ID_partida)
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS Juega (
 
 sql_tbl_torneo_express = """
 CREATE TABLE IF NOT EXISTS Torneo_Express (
-    ID_campeonato VARCHAR(6) NOT NULL PRIMARY KEY,
+    ID_campeonato int NOT NULL auto_increment PRIMARY KEY,
     fecha DATETIME,
     jugador_ganador VARCHAR(12) NOT NULL
 );
@@ -53,14 +53,14 @@ CREATE TABLE IF NOT EXISTS Torneo_Express (
 
 sql_tbl_clasificacion = """
 CREATE TABLE IF NOT EXISTS Clasificacion (
-    ID_clasificacion VARCHAR(6) NOT NULL PRIMARY KEY,
-    ID_campeonato VARCHAR(6) NOT NULL
+    ID_clasificacion int NOT NULL auto_increment PRIMARY KEY,
+    ID_campeonato int NOT NULL 
 );
 """
 
 sql_tbl_participa = """
 CREATE TABLE IF NOT EXISTS Participa (
-    ID_campeonato VARCHAR(6) NOT NULL,
+    ID_campeonato int NOT NULL ,
     usuario VARCHAR(12) NOT NULL,
     CONSTRAINT pk_participa PRIMARY KEY (ID_campeonato, usuario),
     CONSTRAINT fk_usuario_2 FOREIGN KEY (usuario)
@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS Participa (
 
 sql_tbl_jugada = """
 CREATE TABLE IF NOT EXISTS Jugada (
-    ID_jugada VARCHAR(6) NOT NULL PRIMARY KEY,
-    ID_partida VARCHAR(6) NOT NULL,
+    ID_jugada int NOT NULL auto_increment PRIMARY KEY,
+    ID_partida int NOT NULL,
     coordenada_x TINYINT,
     coordenada_y TINYINT,
     CONSTRAINT fk_ID_partida_2 FOREIGN KEY (ID_partida)
@@ -81,15 +81,15 @@ CREATE TABLE IF NOT EXISTS Jugada (
 
 sql_tbl_asignacion = """
 CREATE TABLE IF NOT EXISTS Asignacion (
-    ID_asignacion VARCHAR(6) NOT NULL PRIMARY KEY,
-    ID_campeonato VARCHAR(6) NOT NULL
+    ID_asignacion int NOT NULL auto_increment PRIMARY KEY,
+    ID_campeonato int NOT NULL 
 );
 """
 
 sql_tbl_genera = """
 CREATE TABLE IF NOT EXISTS Genera (
-    ID_campeonato VARCHAR(6) NOT NULL,
-    ID_partida VARCHAR(6) NOT NULL,
+    ID_campeonato int NOT NULL,
+    ID_partida int NOT NULL,
     CONSTRAINT pk_genera PRIMARY KEY (ID_campeonato , ID_partida),
     CONSTRAINT fk_ID_partida_3 FOREIGN KEY (ID_partida)
         REFERENCES Partida (ID_partida)
